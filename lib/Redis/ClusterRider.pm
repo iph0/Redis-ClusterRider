@@ -94,8 +94,8 @@ sub new {
   $self->{on_node_error}   = $params{on_node_error};
 
   my %node_params;
-  foreach my $name ( qw( reconnect every conservative_reconnect cnx_timeout
-      read_timeout write_timeout password name debug ) )
+  foreach my $name ( qw( conservative_reconnect cnx_timeout read_timeout
+    write_timeout password name debug ) )
   {
     next unless defined $params{$name};
     $node_params{$name} = $params{$name};
@@ -535,7 +535,240 @@ Redis::ClusterRider - Daring Redis Cluster client
 
 =head1 SYNOPSIS
 
+  my $cluster = Redis::ClusterRider->new(
+    startup_nodes => [
+      'localhost:7000',
+      'localhost:7001',
+      'localhost:7002',
+    ],
+  );
+
+  $cluster->set( 'foo', 'bar' );
+  print $cluster->get('foo') . "\n",
+
 =head1 DESCRIPTION
+
+Redis::ClusterRider is the Redis Cluster client built on top of the L<Redis>.
+
+Requires Redis 3.0 or higher.
+
+For more information about Redis Cluster see here:
+
+=over
+
+=item *
+
+L<http://redis.io/topics/cluster-tutorial>
+
+=item *
+
+L<http://redis.io/topics/cluster-spec>
+
+=back
+
+=head1 CONSTRUCTOR
+
+=head2 new( %params )
+
+  my $cluster = AnyEvent::RipeRedis::Cluster->new(
+    startup_nodes => [
+      'localhost:7000',
+      'localhost:7001',
+      'localhost:7002',
+    ],
+    password         => 'yourpass',
+    cnx_timeout      => 5,
+    read_timeout     => 5,
+    refresh_interval => 5,
+    lazy             => 1,
+
+    on_node_connect => sub {
+      my $hostport = shift;
+
+      # handling...
+    },
+
+    on_node_error => sub {
+      my $err = shift;
+      my $hostport = shift;
+
+      # error handling...
+    },
+  );
+
+=over
+
+=item startup_nodes => \@nodes
+
+Specifies the list of startup nodes. Parameter should contain the array of
+addresses of some nodes in the cluster. . The client will try to connect to
+random node from the list to retrieve information about all cluster nodes and
+slots mapping. If the client could not connect to first selected node, it will
+try to connect to another random node from the list.
+
+=item password => $password
+
+If the password is specified, the C<AUTH> command is sent to all nodes
+of the cluster after connection.
+
+=item allow_slaves => $boolean
+
+If enabled, the client will try to send read-only commands to slave nodes.
+
+=item cnx_timeout => $fractional_seconds
+
+The C<cnx_timeout> option enables connection timeout. The client will wait at
+most that number of seconds (can be fractional) before giving up connecting to
+a server.
+
+  cnx_timeout => 10.5,
+
+By default the client use kernel's connection timeout.
+
+=item read_timeout => $fractional_seconds
+
+The C<read_timeout> option enables read timeout. The client will wait at most
+that number of seconds (can be fractional) before giving up when reading from
+the server.
+
+Not set by default.
+
+=item lazy => $boolean
+
+If enabled, the initial connection to the startup node establishes at time when
+you will send the first command to the cluster. By default the initial
+connection establishes after calling of the C<new> method.
+
+Disabled by default.
+
+=item on_node_connect => $cb->($hostport)
+
+The C<on_node_connect> callback is called when the connection to particular
+node is successfully established. To callback is passed address of the node to
+which the client was connected.
+
+Not set by default.
+
+=item on_node_error => $cb->( $err, $hostport )
+
+The C<on_node_error> callback is called when occurred an error on particular
+node. To callback are passed two arguments: error message,
+and address of the node on which an error occurred.
+
+Not set by default.
+
+=item debug => $boolean
+
+The C<debug> parameter enables debug information to STDERR, including all
+interactions with the server. You can also enable debug with the REDIS_DEBUG
+environment variable.
+
+=back
+
+See documentation on L<Redis> for more options.
+
+Attention, following L<Redis> options: C<reconnect>, C<every>
+and C<no_auto_connect_on_new> are redefined inside the L<Redis::ClusterRider>
+for own purproses. User defined values for this options will be ignored.
+
+=head1 COMMAND EXECUTION
+
+=head2 <command>( [ @args ] )
+
+To execute the command you must call particular method with corresponding name.
+If any error occurred during the command execution, the client throw an
+exception.
+
+Before the command execution, the client determines the pool of nodes, on which
+the command can be executed. The pool can contain the one or more nodes
+depending on the cluster and the client configurations, and the command type.
+The client will try to execute the command on random node from the pool and, if
+the command failed on selected node, the client will try to execute it on
+another random node.
+
+The full list of the Redis commands can be found here: L<http://redis.io/commands>.
+
+  my $reply   = $cluster->get('foo');
+  my $list    = $cluster->lrange( 'list', 0, -1 );
+  my $counter = $cluster->incr('counter');
+
+=head1 TRANSACTIONS
+
+To perform the transaction you must get the master node by the key using
+C<nodes> method and then execute all commands on this node.
+
+  my $node = $cluster->nodes('foo');
+
+  $node->multi;
+  $node->set( '{foo}bar', "some\r\nstring" );
+  $node->set( '{foo}car', 42 );
+  my $reply = $node->exec;
+
+The detailed information about the Redis transactions can be found here:
+L<http://redis.io/topics/transactions>.
+
+=head1 RECONNECTION
+
+If the connection to the node was lost, the client will try to restore the
+connection when you execute next command. The client will try to reconnect only
+once and, if attempt fails, the client throw an exception. If you need several
+attempts of the reconnection, you must catch the exception and retry a command
+as many times, as you need. Such behavior allows to control reconnection
+procedure.
+
+  while (1) {
+    eval { $cluster->set( 'foo', 'bar' ) };
+
+    if ($@) {
+      warn $@;
+      sleep 1;
+      next;
+    }
+
+    last;
+  }
+
+=head1 OTHER METHODS
+
+=head2 nodes( [ $key ] [, $allow_slaves ] )
+
+Gets particular nodes of the cluster. In scalar context method returns the
+first node from the list.
+
+Getting all master nodes of the cluster:
+
+  my @master_nodes = $cluster->nodes;
+
+Getting all nodes of the cluster, including slave nodes:
+
+  my @nodes = $cluster->nodes( undef, 1 );
+
+Getting master node by the key:
+
+  my $master_node = $cluster->nodes('foo');
+
+Getting nodes by the key, including slave nodes:
+
+  my @nodes = $cluster->nodes( 'foo', 1 );
+
+=head2 refresh_interval( [ $fractional_seconds ] )
+
+Gets or sets the C<refresh_interval> of the client. The C<undef> value resets
+the C<refresh_interval> to default value.
+
+=head1 SERVICE FUNCTIONS
+
+Service functions provided by AnyEvent::RipeRedis::Cluster can be imported.
+
+  use Redis::ClusterRider qw( crc16 hash_slot );
+
+=head2 crc16( $data )
+
+Compute CRC16 for the specified data as defined in Redis Cluster specification.
+
+=head2 hash_slot( $key );
+
+Returns slot number by the key.
 
 =head1 SEE ALSO
 
