@@ -713,7 +713,7 @@ L<http://redis.io/topics/transactions>.
 
 =head1 RECONNECTION
 
-If the connection to the node was lost, the client will try to restore the
+If the connection to the some node was lost, the client will try to restore the
 connection when you execute next command. The client will try to reconnect only
 once and, if attempt fails, the client throw an exception. If you need several
 attempts of the reconnection, you must catch the exception and retry a command
