@@ -535,6 +535,8 @@ Redis::ClusterRider - Daring Redis Cluster client
 
 =head1 SYNOPSIS
 
+  use Redis::ClusterRider;
+
   my $cluster = Redis::ClusterRider->new(
     startup_nodes => [
       'localhost:7000',
@@ -544,7 +546,9 @@ Redis::ClusterRider - Daring Redis Cluster client
   );
 
   $cluster->set( 'foo', 'bar' );
-  print $cluster->get('foo') . "\n",
+  my $value = $cluster->get('foo');
+
+  print "$value\n";
 
 =head1 DESCRIPTION
 
@@ -688,7 +692,7 @@ another random node.
 
 The full list of the Redis commands can be found here: L<http://redis.io/commands>.
 
-  my $reply   = $cluster->get('foo');
+  my $value   = $cluster->get('foo');
   my $list    = $cluster->lrange( 'list', 0, -1 );
   my $counter = $cluster->incr('counter');
 
