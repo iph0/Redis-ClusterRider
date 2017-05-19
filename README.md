@@ -176,18 +176,6 @@ attempts of the reconnection, you must catch the exception and retry a command
 as many times, as you need. Such behavior allows to control reconnection
 procedure.
 
-    while (1) {
-      eval { $cluster->set( 'foo', 'bar' ) };
-
-      if ($@) {
-        warn $@;
-        sleep 1;
-        next;
-      }
-
-      last;
-    }
-
 # OTHER METHODS
 
 ## nodes( \[ $key \] \[, $allow\_slaves \] )
