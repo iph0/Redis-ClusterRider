@@ -33,10 +33,7 @@ my $num = $cluster->get('__last__') || 0;
 while (1) {
   eval {
     $cluster->set( "foo$num", $num );
-
-    my $val = $cluster->get("foo$num");
-    print "$val\n";
-
+    print $cluster->get("foo$num") . "\n";
     $cluster->set( '__last__', $num );
   };
 

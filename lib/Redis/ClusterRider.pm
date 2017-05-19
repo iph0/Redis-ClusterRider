@@ -66,7 +66,8 @@ my %PREDEFINED_CMDS = (
   evalsha     => { readonly => 0, movablekeys => 1, key_pos => 0 },
 );
 
-#$Carp::Internal{ (__PACKAGE__) }++;
+$Carp::Internal{ (__PACKAGE__) }++;
+
 
 sub new {
   my $class  = shift;
@@ -527,48 +528,30 @@ sub AUTOLOAD {
 
 1;
 __END__
-# Below is stub documentation for your module. You'd better edit it!
 
 =head1 NAME
 
-Redis::ClusterRider - Perl extension for blah blah blah
+Redis::ClusterRider - Daring Redis Cluster client
 
 =head1 SYNOPSIS
 
-  use Redis::ClusterRider;
-  blah blah blah
-
 =head1 DESCRIPTION
-
-Stub documentation for Redis::ClusterRider, created by h2xs. It looks like the
-author of the extension was negligent enough to leave the stub
-unedited.
-
-Blah blah blah.
-
 
 =head1 SEE ALSO
 
-Mention other useful documentation such as the documentation of
-related modules or operating system documentation (such as man pages
-in UNIX), or any relevant external documentation such as RFCs or
-standards.
-
-If you have a mailing list set up for your module, mention it here.
-
-If you have a web site set up for your module, mention it here.
+L<Redis>, L<AnyEvent::RipeRedis>, L<AnyEvent::RipeRedis::Cluster>
 
 =head1 AUTHOR
 
-Eugene Ponizovsky, E<lt>iph@E<gt>
+Eugene Ponizovsky, E<lt>ponizovsky@gmail.comE<gt>
+
+Sponsored by SMS Online, E<lt>dev.opensource@sms-online.comE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2017 by Eugene Ponizovsky
+Copyright (c) 2017, Eugene Ponizovsky, SMS Online. All rights reserved.
 
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself, either Perl version 5.20.2 or,
-at your option, any later version of Perl 5 you may have available.
-
+This module is free software; you can redistribute it and/or modify it under
+the same terms as Perl itself.
 
 =cut
