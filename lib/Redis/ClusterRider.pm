@@ -661,12 +661,6 @@ and address of the node on which an error occurred.
 
 Not set by default.
 
-=item debug => $boolean
-
-The C<debug> parameter enables debug information to STDERR, including all
-interactions with the server. You can also enable debug with the REDIS_DEBUG
-environment variable.
-
 =back
 
 See documentation on L<Redis> for more options.
@@ -690,6 +684,13 @@ The client will try to execute the command on random node from the pool and, if
 the command failed on selected node, the client will try to execute it on
 another random node.
 
+If the connection to the some node was lost, the client will try to restore the
+connection when you execute next command. The client will try to reconnect only
+once and, if attempt fails, the client throw an exception. If you need several
+attempts of the reconnection, you must catch the exception and retry a command
+as many times, as you need. Such behavior allows to control reconnection
+procedure.
+
 The full list of the Redis commands can be found here: L<http://redis.io/commands>.
 
   my $value   = $cluster->get('foo');
@@ -710,15 +711,6 @@ C<nodes> method and then execute all commands on this node.
 
 The detailed information about the Redis transactions can be found here:
 L<http://redis.io/topics/transactions>.
-
-=head1 RECONNECTION
-
-If the connection to the some node was lost, the client will try to restore the
-connection when you execute next command. The client will try to reconnect only
-once and, if attempt fails, the client throw an exception. If you need several
-attempts of the reconnection, you must catch the exception and retry a command
-as many times, as you need. Such behavior allows to control reconnection
-procedure.
 
 =head1 OTHER METHODS
 
