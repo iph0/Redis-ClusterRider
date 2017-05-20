@@ -103,6 +103,13 @@ For more information about Redis Cluster see here:
 
     Disabled by default.
 
+- refresh\_interval => $fractional\_seconds
+
+    Cluster state refresh interval. If set to zero, cluster state will be updated
+    only on MOVED redirect.
+
+    By default is 15 seconds.
+
 - on\_node\_connect => $cb->($hostport)
 
     The `on_node_connect` callback is called when the connection to particular

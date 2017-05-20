@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use base qw( Exporter );
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 use Redis;
 use List::MoreUtils qw( bsearch );
@@ -644,6 +644,13 @@ you will send the first command to the cluster. By default the initial
 connection establishes after calling of the C<new> method.
 
 Disabled by default.
+
+=item refresh_interval => $fractional_seconds
+
+Cluster state refresh interval. If set to zero, cluster state will be updated
+only on MOVED redirect.
+
+By default is 15 seconds.
 
 =item on_node_connect => $cb->($hostport)
 

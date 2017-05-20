@@ -1,1 +1,4 @@
 Revision history for Perl extension Redis::ClusterRider.
+
+0.02 Sat May 20 14:59:07 MSK 2017
+  - First release.
