@@ -119,12 +119,6 @@ For more information about Redis Cluster see here:
 
     Not set by default.
 
-- debug => $boolean
-
-    The `debug` parameter enables debug information to STDERR, including all
-    interactions with the server. You can also enable debug with the REDIS\_DEBUG
-    environment variable.
-
 See documentation on [Redis](https://metacpan.org/pod/Redis) for more options.
 
 Attention, following [Redis](https://metacpan.org/pod/Redis) options: `reconnect`, `every`
@@ -146,6 +140,13 @@ The client will try to execute the command on random node from the pool and, if
 the command failed on selected node, the client will try to execute it on
 another random node.
 
+If the connection to the some node was lost, the client will try to restore the
+connection when you execute next command. The client will try to reconnect only
+once and, if attempt fails, the client throw an exception. If you need several
+attempts of the reconnection, you must catch the exception and retry a command
+as many times, as you need. Such behavior allows to control reconnection
+procedure.
+
 The full list of the Redis commands can be found here: [http://redis.io/commands](http://redis.io/commands).
 
     my $value   = $cluster->get('foo');
@@ -166,15 +167,6 @@ To perform the transaction you must get the master node by the key using
 
 The detailed information about the Redis transactions can be found here:
 [http://redis.io/topics/transactions](http://redis.io/topics/transactions).
-
-# RECONNECTION
-
-If the connection to the some node was lost, the client will try to restore the
-connection when you execute next command. The client will try to reconnect only
-once and, if attempt fails, the client throw an exception. If you need several
-attempts of the reconnection, you must catch the exception and retry a command
-as many times, as you need. Such behavior allows to control reconnection
-procedure.
 
 # OTHER METHODS
 
