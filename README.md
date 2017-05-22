@@ -205,7 +205,7 @@ the `refresh_interval` to default value.
 
 # SERVICE FUNCTIONS
 
-Service functions provided by l<Redis::ClusterRider> can be imported.
+Service functions provided by [Redis::ClusterRider](https://metacpan.org/pod/Redis::ClusterRider) can be imported.
 
     use Redis::ClusterRider qw( crc16 hash_slot );
 

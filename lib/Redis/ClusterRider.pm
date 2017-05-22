@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use base qw( Exporter );
 
-our $VERSION = '0.04';
+our $VERSION = '0.06';
 
 use Redis;
 use List::MoreUtils qw( bsearch );
@@ -749,7 +749,7 @@ the C<refresh_interval> to default value.
 
 =head1 SERVICE FUNCTIONS
 
-Service functions provided by l<Redis::ClusterRider> can be imported.
+Service functions provided by L<Redis::ClusterRider> can be imported.
 
   use Redis::ClusterRider qw( crc16 hash_slot );
 
