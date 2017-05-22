@@ -46,7 +46,6 @@ BEGIN {
     set             => 'OK',
     get             => "some\r\nstring",
     client_getname  => 'test',
-    command_getkeys => [qw( {key}1 {key}2 )],
   );
 
   Test::MockObject->fake_module( 'Redis',

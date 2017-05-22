@@ -34,7 +34,7 @@ For more information about Redis Cluster see here:
 
 ## new( %params )
 
-    my $cluster = AnyEvent::RipeRedis::Cluster->new(
+    my $cluster = Redis::ClusterRider->new(
       startup_nodes => [
         'localhost:7000',
         'localhost:7001',
@@ -205,7 +205,7 @@ the `refresh_interval` to default value.
 
 # SERVICE FUNCTIONS
 
-Service functions provided by AnyEvent::RipeRedis::Cluster can be imported.
+Service functions provided by l<Redis::ClusterRider> can be imported.
 
     use Redis::ClusterRider qw( crc16 hash_slot );
 
