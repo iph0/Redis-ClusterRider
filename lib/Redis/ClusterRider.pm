@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use base qw( Exporter );
 
-our $VERSION = '0.08';
+our $VERSION = '0.10';
 
 use Redis;
 use List::MoreUtils qw( bsearch );
@@ -525,6 +525,8 @@ sub AUTOLOAD {
 
   goto &{$sub};
 }
+
+sub DESTROY { }
 
 1;
 __END__
