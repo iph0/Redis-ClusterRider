@@ -724,7 +724,7 @@ The full list of the Redis commands can be found here: L<http://redis.io/command
 
 To perform the transaction you must get the master node by the key using
 C<nodes> method. Then you need to execute C<ECHO> command or any other command
-before C<MULTI> command to avoid the error: "reconnect disabled inside
+before C<MULTI> command to avoid the error "reconnect disabled inside
 transaction or watch" because all connection in the cluster client are lazy.
 
   my $node = $cluster->nodes('foo');
