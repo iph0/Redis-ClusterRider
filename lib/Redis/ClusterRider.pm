@@ -346,7 +346,7 @@ sub _new_node {
   my $self     = shift;
   my $hostport = shift;
 
-  my $redis = Redis->new(
+  return Redis->new(
     %{ $self->{_node_params} },
     server    => $hostport,
     reconnect => 0.001,       # reconnect only once
@@ -355,8 +355,6 @@ sub _new_node {
 
     on_connect => $self->_create_on_node_connect($hostport),
   );
-
-  return $redis;
 }
 
 sub _create_on_node_connect {
