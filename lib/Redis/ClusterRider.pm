@@ -448,7 +448,7 @@ sub _execute {
           $reply = 1;
         }
         else {
-          croak "CLUSTERDOWN The cluster is down";
+          croak 'CLUSTERDOWN The cluster is down';
         }
       }
     };
@@ -526,7 +526,6 @@ sub AUTOLOAD {
   our $AUTOLOAD;
   my $cmd_name = $AUTOLOAD;
   $cmd_name =~ s/^.+:://;
-  $cmd_name = lc($cmd_name);
 
   my $sub = sub {
     my $self = shift;
