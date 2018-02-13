@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use base qw( Exporter );
 
-our $VERSION = '0.16';
+our $VERSION = '0.18';
 
 use Redis;
 use List::MoreUtils qw( bsearch );
@@ -439,28 +439,34 @@ sub _execute {
     my $node     = $nodes_pool->{$hostport};
 
     my $reply;
+    my $err_msg;
 
-    local $@;
+    {
+      local $@;
 
-    eval {
-      $reply = $node->$cmd_method( @{$args} );
+      eval {
+        $reply = $node->$cmd_method( @{$args} );
 
-      if ( $cmd_name eq 'cluster_state' ) {
-        $reply = _parse_info($reply);
+        if ( $cmd_name eq 'cluster_state' ) {
+          $reply = _parse_info($reply);
 
-        if ( $reply->{cluster_state} eq 'ok' ) {
-          $reply = 1;
+          if ( $reply->{cluster_state} eq 'ok' ) {
+            $reply = 1;
+          }
+          else {
+            croak 'CLUSTERDOWN The cluster is down';
+          }
         }
-        else {
-          croak 'CLUSTERDOWN The cluster is down';
-        }
+      };
+
+      if ($@) {
+        $err_msg = $@;
       }
-    };
+    }
 
-    if ($@) {
-      my $err      = $@;
+    if ($err_msg) {
       my $err_code = 'ERR';
-      if ( $err =~ m/^(?:\[\w+\]\s+)?([A-Z]{3,})/ ) {
+      if ( $err_msg =~ m/^(?:\[\w+\]\s+)?([A-Z]{3,})/ ) {
         $err_code = $1;
       }
 
@@ -469,7 +475,7 @@ sub _execute {
           $self->_init;
         }
 
-        my ($fwd_hostport) = ( split( m/\s+/, $err ) )[3];
+        my ($fwd_hostport) = ( split( m/\s+/, $err_msg ) )[3];
         $fwd_hostport =~ s/,$//;
 
         unless ( defined $nodes_pool->{$fwd_hostport} ) {
@@ -480,7 +486,7 @@ sub _execute {
       }
 
       if ( defined $self->{on_node_error} ) {
-        $self->{on_node_error}->( $err, $hostport );
+        $self->{on_node_error}->( $err_msg, $hostport );
       }
 
       if ( ++$fails_cnt < $nodes_num ) {
@@ -491,7 +497,7 @@ sub _execute {
         next;
       }
 
-      die $err;
+      die $err_msg;
     }
 
     return $reply;

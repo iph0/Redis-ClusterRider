@@ -1,5 +1,8 @@
 Revision history for Perl extension Redis::ClusterRider.
 
+0.18 Tue Feb 13 22:57:50 MSK 2018
+  - Fixed error handling for Perl lower 5.14.
+
 0.16 Tue Feb 13 12:02:40 MSK 2018
   - Improved error handling.
 
