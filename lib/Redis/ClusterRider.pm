@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use base qw( Exporter );
 
-our $VERSION = '0.14';
+our $VERSION = '0.16';
 
 use Redis;
 use List::MoreUtils qw( bsearch );
@@ -300,6 +300,8 @@ sub _prepare_slaves {
   my $slave_nodes = shift;
 
   foreach my $hostport ( @{$slave_nodes} ) {
+    local $@;
+
     eval { $self->_execute( 'readonly', [], [ $hostport ] ) };
 
     if ($@) {
@@ -437,6 +439,8 @@ sub _execute {
     my $node     = $nodes_pool->{$hostport};
 
     my $reply;
+
+    local $@;
 
     eval {
       $reply = $node->$cmd_method( @{$args} );
