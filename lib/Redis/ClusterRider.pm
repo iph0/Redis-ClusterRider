@@ -417,6 +417,12 @@ sub _route {
   return $self->_execute( $cmd_name, $args, $nodes );
 }
 
+sub execute {
+  my $self     = shift;
+  my $cmd_name = shift;
+  return $self->_route( $cmd_name, [ @_ ] );
+}
+
 sub _execute {
   my $self     = shift;
   my $cmd_name = shift;
@@ -729,6 +735,14 @@ The full list of the Redis commands can be found here: L<http://redis.io/command
   my $value   = $cluster->get('foo');
   my $list    = $cluster->lrange( 'list', 0, -1 );
   my $counter = $cluster->incr('counter');
+
+=head2 execute( $command [, @args ] )
+
+The alternative way of command execution is explicit C<execute()> call.
+This approach is the only way if Redis commands contain punctuation, such as
+C<GRAPH.QUERY> command of RedisGraph module.
+
+  my $list    = $cluster->execute('GRAPH.QUERY', $graph, $cypher_query);
 
 =head1 TRANSACTIONS
 
