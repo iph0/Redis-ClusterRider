@@ -2,12 +2,13 @@ use 5.008000;
 use strict;
 use warnings;
 
-use Test::More tests => 8;
+use Test::More tests => 10;
 use Test::Fatal;
 BEGIN {
   require 't/test_helper.pl';
 }
 
+our @mock_keys;
 my $cluster = new_cluster(
   allow_slaves     => 1,
   refresh_interval => 5,
@@ -20,6 +21,7 @@ t_set($cluster);
 t_get($cluster);
 t_error_reply($cluster);
 t_multiword_command($cluster);
+t_keys($cluster);
 
 
 sub t_nodes {
@@ -108,6 +110,20 @@ sub t_multiword_command {
   my $t_reply = $cluster->client_getname;
 
   is( $t_reply, 'test', 'multiword command; CLIENT GETNAME' );
+
+  return;
+}
+
+sub t_keys {
+  my $cluster = shift;
+
+  my $t_reply = $cluster->keys( '*' );
+
+  is( $t_reply, 5, 'scalar; KEYS' );
+
+  my @t_reply = $cluster->keys( '*' );
+
+  is_deeply( \@t_reply, \@mock_keys, 'list; KEYS' );
 
   return;
 }
