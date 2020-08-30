@@ -452,16 +452,17 @@ sub _execute {
 
           if ( $reply->{cluster_state} eq 'ok' ) {
             $reply = 1;
+            undef $wantarray;
           }
           else {
             croak 'CLUSTERDOWN The cluster is down';
           }
-        } else {
-          if ($wantarray) {
-            @reply = $node->$cmd_method( @{$args} );
-          } else {
-            $reply = $node->$cmd_method( @{$args} );
-          }
+        }
+        elsif ( $wantarray ) {
+          @reply = $node->$cmd_method( @{$args} );
+        }
+        else {
+          $reply = $node->$cmd_method( @{$args} );
         }
       };
 
