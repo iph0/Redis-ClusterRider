@@ -75,7 +75,7 @@ BEGIN {
 
       $mock->mock( 'keys',
         sub {
-          return wantarray ? @mock_keys : 0+@mock_keys;
+          return @mock_keys;
         }
       );
 
