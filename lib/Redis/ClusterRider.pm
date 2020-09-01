@@ -742,7 +742,7 @@ The alternative way of command execution is explicit C<run_command()> call.
 This approach is the only way if Redis commands contain punctuation, such as
 C<GRAPH.QUERY> command of RedisGraph module.
 
-  my $list = $cluster->run_command('GRAPH.QUERY', $graph, $cypher_query);
+  my $list = $cluster->run_command( 'GRAPH.QUERY', $graph, $cypher_query );
 
 =head1 TRANSACTIONS
 
