@@ -160,9 +160,9 @@ The full list of the Redis commands can be found here: [http://redis.io/commands
     my $list    = $cluster->lrange( 'list', 0, -1 );
     my $counter = $cluster->incr('counter');
 
-## execute( $command [, @args ] )
+## run_command( $command [, @args ] )
 
-The alternative way of command execution is explicit "execute()" call.
+The alternative way of command execution is explicit "run_command()" call.
 This approach is the only way if Redis commands contain punctuation,
 such as "GRAPH.QUERY" command of RedisGraph module.
 
