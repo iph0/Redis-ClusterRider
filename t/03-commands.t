@@ -119,7 +119,7 @@ sub t_keys {
 
   my $t_reply = $cluster->keys( '*' );
 
-  is( $t_reply, 0+@mock_keys, 'scalar; KEYS' );
+  is( $t_reply, scalar(@mock_keys), 'scalar; KEYS' );
 
   my @t_reply = $cluster->keys( '*' );
 
