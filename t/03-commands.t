@@ -19,6 +19,7 @@ my $cluster = new_cluster(
 t_nodes($cluster);
 t_set($cluster);
 t_get($cluster);
+t_run_command($cluster);
 t_error_reply($cluster);
 t_multiword_command($cluster);
 t_keys($cluster);
@@ -86,6 +87,16 @@ sub t_get {
   my $t_reply = $cluster->get('foo');
 
   is( $t_reply, "some\r\nstring", 'reading; GET' );
+
+  return;
+}
+
+sub t_run_command {
+  my $cluster = shift;
+
+  my $t_reply = $cluster->run_command('get', 'foo');
+
+  is( $t_reply, "some\r\nstring", 'reading; GET (run_command)' );
 
   return;
 }
