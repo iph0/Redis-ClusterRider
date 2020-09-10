@@ -434,6 +434,7 @@ sub _run_command {
   my $nodes_num  = scalar @{$nodes};
   my $node_index = int( rand($nodes_num) );
   my $fails_cnt  = 0;
+  my $wantarray  = wantarray;
 
   my $cmd_method
       = $cmd_name eq 'cluster_state'
@@ -445,23 +446,29 @@ sub _run_command {
     my $node     = $nodes_pool->{$hostport};
 
     my $reply;
+    my @reply;
     my $err_msg;
 
     {
       local $@;
 
       eval {
-        $reply = $node->$cmd_method( @{$args} );
-
         if ( $cmd_name eq 'cluster_state' ) {
-          $reply = _parse_info($reply);
+          $reply = _parse_info($node->$cmd_method( @{$args} ));
 
           if ( $reply->{cluster_state} eq 'ok' ) {
             $reply = 1;
+            undef $wantarray;
           }
           else {
             croak 'CLUSTERDOWN The cluster is down';
           }
+        }
+        elsif ( $wantarray ) {
+          @reply = $node->$cmd_method( @{$args} );
+        }
+        else {
+          $reply = $node->$cmd_method( @{$args} );
         }
       };
 
@@ -506,7 +513,7 @@ sub _run_command {
       die $err_msg;
     }
 
-    return $reply;
+    return $wantarray ? @reply : $reply;
   }
 }
 
