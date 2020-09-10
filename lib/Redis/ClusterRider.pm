@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use base qw( Exporter );
 
-our $VERSION = '0.18';
+our $VERSION = '0.20';
 
 use Redis;
 use List::MoreUtils qw( bsearch );
@@ -119,6 +119,7 @@ sub new {
 sub run_command {
   my $self     = shift;
   my $cmd_name = shift;
+
   return $self->_route( $cmd_name, [ @_ ] );
 }
 
