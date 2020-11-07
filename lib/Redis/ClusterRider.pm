@@ -384,9 +384,10 @@ sub _route {
   my $cmd_name = shift;
   my $args     = shift;
 
-  if ( $self->{refresh_interval} > 0
+  if ( ! defined $self->{_slots} || (
+    $self->{refresh_interval} > 0
     && Time::HiRes::tv_interval( $self->{_refresh_timestamp} )
-        > $self->{refresh_interval} )
+        > $self->{refresh_interval} ) )
   {
     $self->_init;
   }
