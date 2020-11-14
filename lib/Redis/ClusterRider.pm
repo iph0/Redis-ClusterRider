@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use base qw( Exporter );
 
-our $VERSION = '0.20';
+our $VERSION = '0.21';
 
 use Redis;
 use List::MoreUtils qw( bsearch );
