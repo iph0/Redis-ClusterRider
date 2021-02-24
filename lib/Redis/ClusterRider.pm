@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use base qw( Exporter );
 
-our $VERSION = '0.21';
+our $VERSION = '0.22';
 
 use Redis;
 use List::MoreUtils qw( bsearch );
@@ -348,9 +348,11 @@ sub _create_on_node_connect {
 
   return sub {
     my $redis = shift;
+
     if ( $self->{allow_slaves} ) {
       $redis->readonly;
     }
+
     if ( defined $self->{on_node_connect} ) {
       $self->{on_node_connect}->($hostport);
     }

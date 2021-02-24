@@ -37,6 +37,7 @@ my $other_cluster_2 = new_cluster(
   read_timeout     => 5,
 );
 t_failover($other_cluster_2, 1);
+
 my $other_cluster_3 = new_cluster(
   allow_slaves     => 1,
   refresh_interval => 5,
