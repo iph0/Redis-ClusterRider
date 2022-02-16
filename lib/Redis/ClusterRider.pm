@@ -85,6 +85,11 @@ sub new {
     croak 'Specified empty list of startup nodes';
   }
 
+  if ($params{fallback}) {
+    my $node = Redis->new(%params, server => $params{startup_nodes}->[0]);
+    eval { $node->cluster_info(); 1 } or return $node;
+  }
+
   $self->{startup_nodes} = $params{startup_nodes};
   $self->{allow_slaves}  = $params{allow_slaves};
   $self->{lazy}          = $params{lazy};
@@ -603,6 +608,7 @@ L<http://redis.io/topics/cluster-spec>
       'localhost:7002',
     ],
     password         => 'yourpass',
+    fallback         => 1,
     cnx_timeout      => 5,
     read_timeout     => 5,
     refresh_interval => 5,
@@ -640,6 +646,11 @@ of the cluster after connection.
 =item allow_slaves => $boolean
 
 If enabled, the client will try to send read-only commands to slave nodes.
+
+=item fallback => $boolean
+
+If enabled, perform additional quick Redis connection to C<startup_nodes[0]>
+on C<new()> call and return Redis object if it has cluster support disabled.
 
 =item cnx_timeout => $fractional_seconds
 
