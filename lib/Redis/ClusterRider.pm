@@ -11,7 +11,7 @@ use Redis;
 use List::MoreUtils qw( bsearch );
 use Scalar::Util qw( looks_like_number weaken );
 use Time::HiRes;
-use Carp qw( croak );
+use Carp qw( carp croak );
 
 BEGIN {
   our @EXPORT_OK = qw( crc16 hash_slot );
@@ -85,7 +85,11 @@ sub new {
     croak 'Specified empty list of startup nodes';
   }
 
-  if ($params{fallback}) {
+  if ( $params{fallback} ) {
+    if ( $params{lazy} ) {
+      carp 'Fallback mode revokes lazy';
+    }
+
     my $node = Redis->new(%params, server => $params{startup_nodes}->[0]);
     eval { $node->cluster_info(); 1 } or return $node;
   }
@@ -652,6 +656,8 @@ If enabled, the client will try to send read-only commands to slave nodes.
 If enabled, perform additional quick Redis connection to C<startup_nodes[0]>
 on C<new()> call and return Redis object if it has cluster support disabled.
 
+Disabled by default.
+
 =item cnx_timeout => $fractional_seconds
 
 The C<cnx_timeout> option enables connection timeout. The client will wait at
@@ -674,7 +680,8 @@ Not set by default.
 
 If enabled, the initial connection to the startup node establishes at time when
 you will send the first command to the cluster. By default the initial
-connection establishes after calling of the C<new> method.
+connection establishes after calling of the C<new> method. C<lazy> for
+C<startup_nodes[0]> has no sense if C<fallback> is enabled.
 
 Disabled by default.
 
