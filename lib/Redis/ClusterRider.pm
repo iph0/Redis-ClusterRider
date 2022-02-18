@@ -87,7 +87,7 @@ sub new {
 
   if ( $params{fallback} ) {
     if ( $params{lazy} ) {
-      carp 'Fallback mode revokes lazy';
+      carp 'Fallback mode revokes lazy for ' . $params{startup_nodes}->[0];
     }
 
     my $node = Redis->new(%params, server => $params{startup_nodes}->[0]);
