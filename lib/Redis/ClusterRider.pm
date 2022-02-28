@@ -85,12 +85,13 @@ sub new {
     croak 'Specified empty list of startup nodes';
   }
 
+  $self->{redis_class} = $params{redis_class} || 'Redis';
   if ( $params{fallback} ) {
     if ( $params{lazy} ) {
       carp 'Fallback mode revokes lazy for ' . $params{startup_nodes}->[0];
     }
 
-    my $node = Redis->new(%params, server => $params{startup_nodes}->[0]);
+    my $node = $self->{redis_class}->new(%params, server => $params{startup_nodes}->[0]);
     eval { $node->cluster_info(); 1 } or return $node;
   }
 
@@ -338,7 +339,7 @@ sub _new_node {
   my $self     = shift;
   my $hostport = shift;
 
-  return Redis->new(
+  return $self->{redis_class}->new(
     %{ $self->{_node_params} },
     server    => $hostport,
     reconnect => 0.001,       # reconnect only once
