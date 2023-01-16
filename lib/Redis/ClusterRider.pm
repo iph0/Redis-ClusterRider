@@ -104,7 +104,7 @@ sub new {
 
   my %node_params;
   foreach my $name ( qw( conservative_reconnect cnx_timeout read_timeout
-    write_timeout password name debug ) )
+    write_timeout password username name debug ) )
   {
     next unless defined $params{$name};
     $node_params{$name} = $params{$name};
@@ -611,6 +611,7 @@ L<http://redis.io/topics/cluster-spec>
       'localhost:7001',
       'localhost:7002',
     ],
+    username         => 'yourname',
     password         => 'yourpass',
     fallback         => 1,
     cnx_timeout      => 5,
@@ -646,6 +647,10 @@ try to connect to another random node from the list.
 
 If the password is specified, the C<AUTH> command is sent to all nodes
 of the cluster after connection.
+
+=item username => $username
+
+Authenticate to the server using Redis 6.0+ ACL System (see https://redis.io/commands/auth)
 
 =item allow_slaves => $boolean
 
