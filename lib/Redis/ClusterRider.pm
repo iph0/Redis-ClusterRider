@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use base qw( Exporter );
 
-our $VERSION = '0.24';
+our $VERSION = '0.26';
 
 use Redis;
 use List::MoreUtils qw( bsearch );
@@ -829,7 +829,7 @@ Sponsored by SMS Online, E<lt>dev.opensource@sms-online.comE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (c) 2017-2022, Eugene Ponizovsky, SMS Online. All rights reserved.
+Copyright (c) 2017-2023, Eugene Ponizovsky, SMS Online. All rights reserved.
 
 This module is free software; you can redistribute it and/or modify it under
 the same terms as Perl itself.
